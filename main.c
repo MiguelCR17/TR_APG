@@ -3,7 +3,7 @@
 
 void menu();
 void ler_ficheiro();
-void mostrar_tabela();
+void tabela();
 
 
 int main() {
@@ -14,48 +14,46 @@ int main() {
 //***************************************************MENU***************************************************************
 void menu(){
     char menu;
-    printf("Digite 1 para ler o ficheiro:\n");
+    printf("Digite 1 para ler o ficheiro, 2 para ver a tabela:\n");
     scanf("%d", &menu);
 
     switch(menu) {
         case 1: //ler ficheiro
             ler_ficheiro();
             break;
-
-        case 2: //ver tabela
-            mostrar_tabela();
+        case 2: //mostrar tabela
+            tabela();
             break;
     }
 }
 //**************************************Ler ficheiro********************* C:\Users\mcrib\OneDrive\Documentos\example.csv
 void ler_ficheiro() {
-        char file[200];
-        char volta;
-        printf("\nPara escolher o ficheiro escreva o diretorio do ficheiro:\n");
-        fflush(stdin);//o entar fica na memoria entao isto "apaga a memoria" para fazer o if direito
-        gets(file);
-        FILE *fp = fopen(file, "r");
-        if (fp != NULL) {
-            while (!feof(fp)) {
-                printf("%c", fgetc(fp));              //printf("%c", fgetc(fp));
-            }
-
-                printf("\n Deseja voltar para o menu? Digite 'B'\n");
-                scanf("%d", &volta);
-            while(volta != 'V') {
-                if(volta == 'V'){
-                    menu();
-                }
-            }
-            fclose(fp);
+    char file[200];
+    char volta;
+    int x = 19;
+    printf("Para escolher o ficheiro escreva o diretorio do ficheiro:\n");
+    fflush(stdin);//o entar fica na memoria entao isto "apaga a memoria" para fazer o if direito
+    gets(file);
+    FILE *fp = fopen(file, "r");
+    if (fp != NULL) {
+        while (!feof(fp)) {
+            printf("%c", fgetc(fp));              //printf("%c", fgetc(fp));
         }
-        else {
-            printf("\nErro na abertura do ficheiro!\n");
+        while(volta != 1) {
+            printf("\nDeseja voltar para o menu? Digite '1'\n");
+            scanf("%d", &volta);
+            if(volta == 1){
+                menu();
+            }
         }
-
-
+        fclose(fp);
+    }
+    else {
+        printf("\nErro na abertura do ficheiro!\n");
+    }
 }
 
-void mostrar_tabela(){
-
+void tabela(fp){
+    fflush(stdin);
+    printf("%d", fp);
 }
