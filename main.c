@@ -5,39 +5,52 @@
 void menu();
 char *ler_ficheiro();
 FILE *fp;
-//void tabela(char *file);
-char file[200];
+void tabela();
+char file[1000];
 char conteudo[1000][1000][5];
+int soma();
+int linhas;
+int colunas;
 
 int main() {
     menu();
-    //ler_ficheiro();
     return 0;
 }
 //***************************************************MENU***************************************************************
 void menu(){
     int menu;
-    opcao:printf("\nDigite 1 para ler o ficheiro, 2 para ver a tabela:\n");
+    int operacoes;
+    opcao: printf("\nDigite:\n1-> Ler o ficheiro\n2-> Ver o ficheiro\n3-> Aceder ao menu de operacoes\n9-> Sair do programa\n");
     scanf("%d", &menu);
 
     switch(menu) {
         case 1: //ler ficheiro
             ler_ficheiro();
             goto opcao;
-            break;
         case 2: //mostrar tabela
-            //tabela(file);
+            tabela();
             goto opcao;
-            break;
         case 3:
+        operacoes: printf("\nDigite:\n1-> Realizar a soma\n9-> Voltar ao menu principal\n");
+            scanf("%d", &operacoes);
+            switch(operacoes) {
+                case (1):
+                    soma();
+                    goto operacoes;
+                case (9):
+                    goto opcao;
+                default:
+                    printf("Selecione uma opcao disponivel.\n");
+                    goto operacoes;
+            }
+        case (9):
             break;
         default:
-            printf("Selecione uma opcao disponivel em cima.\n");
+            printf("Selecione uma opcao disponivel.\n");
             goto opcao;
-            break;
     }
 }
-//**************************************Ler ficheiro********************* C:\Users\mcrib\OneDrive\Documentos\example.csv
+/**************************************Ler ficheiro******************* C:\Users\mcrib\OneDrive\Documentos\example.csv */
 char *ler_ficheiro() {
     char linha[300];
     char *token;
@@ -46,11 +59,11 @@ char *ler_ficheiro() {
     gets(file);
     fp = fopen(file, "r");
     if (fp != NULL) {
-        fgets (linha, 80, fp);         //ignorar titulo
-        int i=0;
-        int j= 0;
+        fgets (linha, 300, fp);         //ignorar titulo
+        int i=0;        //linhas
+        int j= 0;       //colunas
         //Preencher matriz conteudo
-        while(fgets (linha, 80, fp)) {       //percorrer os registos
+        while(fgets (linha, 300, fp)) {       //percorrer os registos
             j= 0;
             token = strtok(linha, ";");
             while( token != NULL ) {                //percorrer os valores
@@ -60,8 +73,11 @@ char *ler_ficheiro() {
             }
             i++;
         }
-        //IMPRIMIR
-        int row, columns,length;
+        linhas = i;
+        colunas = j;
+        /*
+        //IMPRIMIR a Matriz
+        int row, columns;
         printf("\n");
         for (row=0; row<i; row++){
             for(columns=0; columns<j; columns++){
@@ -69,6 +85,8 @@ char *ler_ficheiro() {
             }
             printf("|\n");
         }
+         */
+        printf("\nO Ficheiro tem %d Linhas(sem contar com os Titulos) e %d Colunas\n", i, j);
         printf("Ficheiro\t%s\t lido com sucesso!\n",file);
         fclose(fp);
     } else {
@@ -76,41 +94,44 @@ char *ler_ficheiro() {
     }
     return file;
 }
-/*
-void tabela(char *file){
+/******************************************* Mostrar Tabela ***********************************************************/
+void tabela(){
+    int k=0;
+    int i;
     char buffer[80];
     //abrir ficheiro
     fp = fopen(file, "r");
+    //Verificar se o ficheiro n esta vazio
     if(fp == NULL) {
         printf("\nErro na abertura do ficheiro!\n");
     }
-    int i=0;    //i conta o nº de linhas
-
-    while( fgets (buffer, 80, fp)!=NULL ) {
-
-        puts(buffer);
-        i++;
+    printf("Quantas linhas que perntende imprimir?\n");
+    scanf("%d", &k);
+    for(i=0;i<k && fgets(buffer, 300, fp) != NULL;i++) {
+        //printa linha a linha do ficheiro
+        //while (fgets(buffer, 300, fp) != NULL) {
+            puts(buffer);
+       // }
     }
-    printf("\nO Ficheiro contem %d colunas.\n", i);
     fclose(fp);
-*/
-//ler a 1º linha
-//ler 1º coluna
-//fechar ficheiro
-//imprimir
+}
 
-
-
-/*
-    while (!feof(fp)) {
-       // printf("%c", fgetc(fp));                                           //printf("%c", fgetc(fp));
-        char token = strtok(buffer, ";");
-        while (token) {
-            // Just printing each integer here but handle as needed
-            printf("%s\n", token);
-
-            token = strtok(NULL, ";");
+int soma(){
+    int i = 0;
+    int k = 0;
+    int resultado = 0;
+    double fresultado=0;
+    printf("Qual a colunas que pertende somar?\n");
+    scanf("%d", &k);
+    if(k<=colunas) {
+        for (i = 0; i < linhas; i++) {
+            fresultado = (double) resultado + atoi(conteudo[i][k-1]);
         }
+        printf("O resultado final e:%f\n", fresultado);
+    }
+    else{
+        printf("A coluna que digitou nao existe.\n");
     }
 
-} */
+    return 0;
+}
