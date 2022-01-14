@@ -6,8 +6,10 @@
 #include <time.h>
 
 void menu();
+void historico();
 char *ler_ficheiro();
 FILE *fp;
+FILE *history;
 void tabela();
 void fic();
 char file[1000];
@@ -20,6 +22,7 @@ void dp();
 void maxmin();
 void mediana();
 void quartis();
+char* printTime();
 
 int main() {
     menu();
@@ -36,7 +39,8 @@ void menu(){
 
     switch(menu) {
         case 1: //ler ficheiro
-            ler_ficheiro();
+        historico();
+        ler_ficheiro();
             goto opcao;
         case 2: //mostrar tabela
         tf:printf("1-> Ver tabela\n2-> Ver ficheiro\n9-> Voltar para o menu principal\n");
@@ -146,6 +150,22 @@ void tabela(){
         printf("|\n");
     }
 }
+
+/**********************TIME****************/
+
+char* printTime(){
+
+    time_t now = time(NULL) ;
+    struct tm tm_now ;
+    //localtime_r(&now, &tm_now) ;
+    char buff[100] ;
+    strftime(buff, sizeof(buff), "%Y-%m-%d %H:%M", &tm_now) ;
+    printf("'%s'\n", buff) ;
+
+    return 0;
+}
+
+
 /******************************************* Mostrar Ficheiro ***********************************************************/
 void fic(){
     int k=0;
@@ -215,7 +235,10 @@ int soma(){
             else strcat(conteudo[i][k - 1],".0");
             fresultado += atof(conteudo[i][k - 1]);
         }
+        fprintf(history, "O resultado final: %f\n", fresultado);
         printf("O resultado final: %f\n", fresultado);
+        //fprintf(history, printTime());
+
     }
     else{
         printf("A coluna que digitou nao existe.\n");
@@ -240,6 +263,7 @@ int media(){
             fresultado += atof(conteudo[i][k - 1]);
         }
         fresultado/=linhas;
+        fprintf(history, "O resultado final: %f\n", fresultado);
         printf("O resultado final: %f\n", fresultado);
     }
     else{
@@ -270,6 +294,7 @@ void dp(){
             sum += pow((atof(conteudo[i][k-1]) - media), 2);
         }
         fresultado = sqrt(sum / linhas);
+        fprintf(history, "O resultado final: %f\n", fresultado);
         printf("O resultado final: %f\n", fresultado);
     }
     else{
@@ -297,6 +322,8 @@ void maxmin() {
     } else {
         printf("A coluna que digitou nao existe.\n");
     }
+    fprintf(history, "O maximo e: %.2f\nO minimo e: %.2f", max, min);
+
     printf("O maximo e: %.2f\nO minimo e: %.2f", max, min);
 }
 /******************************************** Mediana *****************************************************************/
@@ -345,7 +372,8 @@ void mediana(){
         } else {
             printf("A coluna que digitou nao existe.\n");
         }
-        printf("A mediana e: %.2f", median(tempList));
+    fprintf(history, "A mediana e: %.2f", median(tempList));
+    printf("A mediana e: %.2f", median(tempList));
 }
 /************************************************* Organizar variaveis ************************************************/
 float *ordenar(float *valuesList){
@@ -388,38 +416,12 @@ void quartis() {
         quartil3 = ((linhas + 1) * 0.75) + 0.5;
 
         //tempList = ordenar(tempList);
-
-        printf("O Quartil 1 e: %f\nO Quartil 3 e: %f\n", ordenar(tempList)[quartil1 - 1],
-               ordenar(tempList)[quartil3 - 1]);
+        fprintf(history, "O Quartil 1 e: %f\nO Quartil 3 e: %f\n", ordenar(tempList)[quartil1 - 1],ordenar(tempList)[quartil3 - 1]);
+        printf("O Quartil 1 e: %f\nO Quartil 3 e: %f\n", ordenar(tempList)[quartil1 - 1],ordenar(tempList)[quartil3 - 1]);
 
     }
 }
-/************************************************** M ou F ***********************************************************
-float *sexo(char *conteudo[i][k]){
-    int i;
-    int k = 0;
-    float masculino, femenino;
-    if (k <= colunas) {
-        for (i = 0; i < linhas; i++) {
-            if("F"==conteudo[i][k-1]){
-                femenino++;
-            }
-            if("M"==conteudo[i][k-1]){
-                masculino++;
-            }
-        }
-    }
-    return
-}*/
 /************************************************** Historico *********************************************************/
-char *historico(printf){
-    struct tm {
-        int tm_sec;         /* seconds,  range 0 to 59          */
-        int tm_min;         /* minutes, range 0 to 59           */
-        int tm_hour;        /* hours, range 0 to 23             */
-        int tm_mday;        /* day of the month, range 1 to 31  */
-        int tm_mon;         /* month, range 0 to 11             */
-    }
-    fp = fopen("historico.csv", "r+");
-    return historico;
+void historico(){
+    history = fopen("historico.csv", "w+");
 }
