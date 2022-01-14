@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
+#include <time.h>
 
 void menu();
 char *ler_ficheiro();
@@ -11,7 +12,6 @@ void tabela();
 void fic();
 char file[1000];
 char conteudo[1000][100][20];
-float sexo();
 int soma();
 int linhas;
 int colunas;
@@ -19,7 +19,7 @@ int media();
 void dp();
 void maxmin();
 void mediana();
-
+void quartis();
 
 int main() {
     menu();
@@ -55,7 +55,7 @@ void menu(){
                     goto tf;
             }
         case 3:
-        operacoes: printf("\nDigite:\n1-> Realizar a soma\n2-> Calcular a media\n3-> Calcular o desvio padrao\n4-> Saber o maximo e minimo\n5-> Saber a mediana\n9-> Voltar ao menu principal\n");
+        operacoes: printf("\nDigite:\n1-> Realizar a soma\n2-> Calcular a media\n3-> Calcular o desvio padrao\n4-> Saber o maximo e minimo\n5-> Saber a mediana\n6-> Calcular Q1 e Q3\n9-> Voltar ao menu principal\n");
             scanf("%d", &operacoes);
             switch(operacoes) {
                 case (1):
@@ -72,6 +72,9 @@ void menu(){
                     goto operacoes;
                 case (5):
                     mediana();
+                    goto operacoes;
+                case (6):
+                    quartis();
                     goto operacoes;
                 case (9):
                     goto opcao;
@@ -266,7 +269,6 @@ void dp(){
         for (i = 0; i < linhas; i++) {
             sum += pow((atof(conteudo[i][k-1]) - media), 2);
         }
-        printf("somatoria: %f", sum);
         fresultado = sqrt(sum / linhas);
         printf("O resultado final: %f\n", fresultado);
     }
@@ -301,13 +303,11 @@ void maxmin() {
 float median(float *valuesList){
 
     int i = 0,j = 0;
-    float t, median=0;
-    printf("linhas %d \n", linhas);
-    printf("colunas %d \n", colunas);
+    float t=0.0, median=0;
+    int k=0;
     // Organizar dados
-    for(i=0 ; i<linhas ; i++) {
+    for(i=0 ; i<linhas-1 ; i++) {
         for (j = i+1; j < linhas; j++) {
-            //printf("O maximo e: %.2f\n", valuesList[j]);
             if (valuesList[i] > valuesList[j]) { // Interchanging values
                 t = valuesList[i];
                 valuesList[i] = valuesList[j];
@@ -318,10 +318,6 @@ float median(float *valuesList){
     }
     //sorting ends
     // calculation of median
-    i=0;
-    for (i = 0; i < linhas; i++) {
-        printf("array: %f ||", valuesList[i]);
-    }
     if ( linhas % 2 == 0)
         median = (valuesList[(linhas - 1)/2] + valuesList[linhas/2])/2.0 ;
     else
@@ -330,30 +326,75 @@ float median(float *valuesList){
     return median;
 }
 
-void mediana( ){
+void mediana(){
         int i;
         int k = 0;
         float tempList[linhas];
         printf("Qual a coluna que pretende saber a mediana?\n");
         scanf("%d", &k);
-        if (k <= colunas-1) {
-            for (i = 0; i < linhas-1; i++) {
+        if (k <= colunas) {
+            for (i = 0; i < linhas; i++) {
                 strcpy(conteudo[i][k - 1],remover_espacos_strings(conteudo[i][k-1]));
                 if (strstr(conteudo[i][k - 1], ",")) {
                     strcpy(conteudo[i][k - 1], replace_char(conteudo[i][k - 1], ',', '.'));
                 }
                 else strcat(conteudo[i][k - 1],".0");
 
-                tempList[i] = atof(conteudo[i][k-1]);
+                tempList[i] = (float) atof(conteudo[i][k-1]);
             }
         } else {
             printf("A coluna que digitou nao existe.\n");
         }
         printf("A mediana e: %.2f", median(tempList));
 }
+/************************************************* Organizar variaveis ************************************************/
+float *ordenar(float *valuesList){
+    int i = 0, j = 0;
+    float t = 0.0;
+    int k = 0;
+    // Organizar dados
+    for (i = 0; i < linhas - 1; i++) {
+        for (j = i + 1; j < linhas; j++) {
+            //printf("Valores i, j, t: %f, %f, %f\n", valuesList[i], valuesList[j], t);
+            if (valuesList[i] > valuesList[j]) { // Interchanging values
+                t = valuesList[i];
+                valuesList[i] = valuesList[j];
+                valuesList[j] = t;
+            } else
+                continue;
+        }
+    }
+    return valuesList;
+}
 /************************************************* Quartil 1 e 3 ******************************************************/
-//tenho que ordenar bem as coisas para esta aqui
-/************************************************** M ou F ************************************************************/
+void quartis() {
+    int i;
+    int k = 0;
+    int quartil1 = 0, quartil3 = 0;
+    float median = 0;
+    float tempList[linhas];
+    printf("Qual a coluna que pretende saber a mediana?\n");
+    scanf("%d", &k);
+    if (k <= colunas) {
+        for (i = 0; i < linhas; i++) {
+            strcpy(conteudo[i][k - 1], remover_espacos_strings(conteudo[i][k - 1]));
+            if (strstr(conteudo[i][k - 1], ",")) {
+                strcpy(conteudo[i][k - 1], replace_char(conteudo[i][k - 1], ',', '.'));
+            } else strcat(conteudo[i][k - 1], ".0");
+
+            tempList[i] = (float) atof(conteudo[i][k - 1]);
+        }
+        quartil1 = ((linhas + 1) * 0.25) + 0.5;
+        quartil3 = ((linhas + 1) * 0.75) + 0.5;
+
+        //tempList = ordenar(tempList);
+
+        printf("O Quartil 1 e: %f\nO Quartil 3 e: %f\n", ordenar(tempList)[quartil1 - 1],
+               ordenar(tempList)[quartil3 - 1]);
+
+    }
+}
+/************************************************** M ou F ***********************************************************
 float *sexo(char *conteudo[i][k]){
     int i;
     int k = 0;
@@ -367,10 +408,18 @@ float *sexo(char *conteudo[i][k]){
                 masculino++;
             }
         }
-    } else {
-        printf("A coluna que digitou nao existe.\n");
     }
-    printf("Ha %.2f rapazes\nE %.2f raparigas", femenino, masculino);
     return
-}
+}*/
 /************************************************** Historico *********************************************************/
+char *historico(printf){
+    struct tm {
+        int tm_sec;         /* seconds,  range 0 to 59          */
+        int tm_min;         /* minutes, range 0 to 59           */
+        int tm_hour;        /* hours, range 0 to 23             */
+        int tm_mday;        /* day of the month, range 1 to 31  */
+        int tm_mon;         /* month, range 0 to 11             */
+    }
+    fp = fopen("historico.csv", "r+");
+    return historico;
+}
